@@ -40,9 +40,7 @@ int main() {
 	
 	//CreateRemoteThread_Type1(DllPath, PID);
 	NtCreateThreadEx_Type2(DllPath, PID);
-
 	system("PAUSE");
-
 	return 0;
 }
 
@@ -110,12 +108,21 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
 		Sleep(2000);
 	}
 
+	CloseHandle(hThread);
+
+	CloseHandle(hProcess);
+
 	return true;
 }
 
 bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 
-	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, PID);
+	HANDLE hProcess = OpenProcess(
+		PROCESS_QUERY_INFORMATION |
+		PROCESS_CREATE_THREAD |
+		PROCESS_VM_OPERATION |
+		PROCESS_VM_WRITE,
+		FALSE, PID);
 
 	LPVOID LoadLibraryAddr = (LPVOID)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA");
 
@@ -171,19 +178,19 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 	NtCreateThreadExBuffer ntBuffer;
 
 	memset(&ntBuffer, 0, sizeof(NtCreateThreadExBuffer));
-	DWORD temp1 = 0;
-	DWORD temp2 = 0;
+	LARGE_INTEGER  temp1 = { 0 };
+	LARGE_INTEGER  temp2 = { 0 };
 	HANDLE hThread;
 
 	// set function arguements
 	ntBuffer.Size = sizeof(NtCreateThreadExBuffer);
 	ntBuffer.Unknown1 = 0x10003;
 	ntBuffer.Unknown2 = 0x8;
-	ntBuffer.Unknown3 = &temp2;
+	ntBuffer.Unknown3 = (DWORD*)&temp2;
 	ntBuffer.Unknown4 = 0;
 	ntBuffer.Unknown5 = 0x10004;
 	ntBuffer.Unknown6 = 4;
-	ntBuffer.Unknown7 = &temp1;
+	ntBuffer.Unknown7 = (DWORD*)&temp1;
 	ntBuffer.Unknown8 = 0;
 
 	NTSTATUS status = funNtCreateThreadEx(
@@ -207,9 +214,16 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 		return false;
 	}
 
+	printf("Thread started with NtCreateThread\n");
+	Sleep(2000);
+
 	WaitForSingleObject(hThread, INFINITE);
 
-	VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE);
+	if (VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE)) {
+		//VirtualFreeEx(hProc, reinterpret_cast<int*>(pDllPath) + 0X010000, 0, MEM_RELEASE);
+		printf("Memory was freed in target process\n");
+		Sleep(2000);
+	}
 
 	//CloseHandle(hThread);
 
