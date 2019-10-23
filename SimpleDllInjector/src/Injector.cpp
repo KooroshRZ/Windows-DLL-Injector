@@ -38,9 +38,10 @@ int main() {
 	Sleep(2000);
 
 	
-	CreateRemoteThread_Type1(DllPath, PID);
+	//CreateRemoteThread_Type1(DllPath, PID);
+	NtCreateThreadEx_Type2(DllPath, PID);
+
 	system("PAUSE");
-	//NtCreateThreadEx_Type2(DllPath, PID);*/
 
 	return 0;
 }
@@ -48,9 +49,9 @@ int main() {
 
 bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
 
-	HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, PID);
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, PID);
 
-	if (!hProc) {
+	if (!hProcess) {
 		printf("Could not open Process for PID %d\n", PID);
 		printf("LastError : 0X%x\n", GetLastError());
 		system("PAUSE");
@@ -69,7 +70,7 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
 	printf("LoadLibraryA is located at real address: 0X%x\n", LoadLibAddr);
 	Sleep(2000);
 
-	LPVOID pDllPath = VirtualAllocEx(hProc, NULL, strlen(DllPath), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	LPVOID pDllPath = VirtualAllocEx(hProcess, NULL, strlen(DllPath), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
 	if (!pDllPath) {
 		printf("Could not allocate Memory in target process\n");
@@ -81,7 +82,7 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
 	printf("Dll path memory allocated at: 0X%x\n", pDllPath);
 	Sleep(2000);
 
-	BOOL Written = WriteProcessMemory(hProc, pDllPath, (LPVOID)DllPath, strlen(DllPath), NULL);
+	BOOL Written = WriteProcessMemory(hProcess, pDllPath, (LPVOID)DllPath, strlen(DllPath), NULL);
 
 	if (!Written) {
 		printf("Could not write into the allocated memory\n");
@@ -90,7 +91,7 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
 		return false;
 	}
 
-	HANDLE hThread = CreateRemoteThread(hProc, NULL, NULL, (LPTHREAD_START_ROUTINE)LoadLibAddr, pDllPath, 0, NULL);
+	HANDLE hThread = CreateRemoteThread(hProcess, NULL, NULL, (LPTHREAD_START_ROUTINE)LoadLibAddr, pDllPath, 0, NULL);
 
 	if (!hThread) {
 		printf("Could not open Thread with CreatRemoteThread API\n");
@@ -103,7 +104,7 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
 
 	WaitForSingleObject(hThread, INFINITE);
 
-	if (VirtualFreeEx(hProc, pDllPath, 0, MEM_RELEASE)) {
+	if (VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE)) {
 		//VirtualFreeEx(hProc, reinterpret_cast<int*>(pDllPath) + 0X010000, 0, MEM_RELEASE);
 		printf("Memory was freed in target process\n");
 		Sleep(2000);
@@ -113,5 +114,106 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
 }
 
 bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
+
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, PID);
+
+	LPVOID LoadLibraryAddr = (LPVOID)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA");
+
+	if (!LoadLibraryAddr) {
+		printf("Could note get real address of LoadLibraryA from kernel32.dll!\n");
+		printf("LastError : 0X%x\n", GetLastError());
+		system("PAUSE");
+		return false;
+	}
+
+	printf("LoadLibraryA is located at real address: 0X%x\n", LoadLibraryAddr);
+	Sleep(2000);
+
+	LPVOID pDllPath = VirtualAllocEx(hProcess, NULL, strlen(DllPath), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+	if (!pDllPath) {
+		printf("Could not allocate Memory in target process\n");
+		printf("LastError : 0X%x\n", GetLastError());
+		system("PAUSE");
+		return false;
+	}
+
+	printf("Dll path memory allocated at: 0X%x\n", pDllPath);
+	Sleep(2000);
+
+	BOOL Written = WriteProcessMemory(hProcess, pDllPath, (LPVOID)DllPath, strlen(DllPath), NULL);
+
+	if (!Written) {
+		printf("Could not write into the allocated memory\n");
+		printf("LastError : 0X%x\n", GetLastError());
+		system("PAUSE");
+		return false;
+	}
+
+	HMODULE modNtDll = GetModuleHandle("ntdll.dll");
+
+	if (!modNtDll) {
+		printf("Failed to get moduke handle for ntdll.dll");
+		printf("LastError : 0X%x\n", GetLastError());
+		system("PASUE");
+		return false;
+	}
+
+	LPFUN_NtCreateThreadEx funNtCreateThreadEx = (LPFUN_NtCreateThreadEx)GetProcAddress(modNtDll, "NtCreateThreadEx");
+
+	if (!funNtCreateThreadEx) {
+		printf("Failed to get NtCreateThreadEx function address from ntdll.dll\n");
+		printf("LastError: 0X%x\n", GetLastError());
+		system("PASUE");
+		return false;
+	}
+
+	NtCreateThreadExBuffer ntBuffer;
+
+	memset(&ntBuffer, 0, sizeof(NtCreateThreadExBuffer));
+	DWORD temp1 = 0;
+	DWORD temp2 = 0;
+	HANDLE hThread;
+
+	// set function arguements
+	ntBuffer.Size = sizeof(NtCreateThreadExBuffer);
+	ntBuffer.Unknown1 = 0x10003;
+	ntBuffer.Unknown2 = 0x8;
+	ntBuffer.Unknown3 = &temp2;
+	ntBuffer.Unknown4 = 0;
+	ntBuffer.Unknown5 = 0x10004;
+	ntBuffer.Unknown6 = 4;
+	ntBuffer.Unknown7 = &temp1;
+	ntBuffer.Unknown8 = 0;
+
+	NTSTATUS status = funNtCreateThreadEx(
+		&hThread,
+		0x1FFFFF,
+		NULL,
+		hProcess,
+		(LPTHREAD_START_ROUTINE)LoadLibraryAddr,
+		pDllPath,
+		FALSE, //start instantly
+		NULL,
+		NULL,
+		NULL,
+		&ntBuffer
+	);
+
+	if (!hThread) {
+		printf("\n NtCreateThreadEx failed\n");
+		printf("LastError: 0X%x", GetLastError());
+		system("PAUSE");
+		return false;
+	}
+
+	WaitForSingleObject(hThread, INFINITE);
+
+	VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE);
+
+	//CloseHandle(hThread);
+
+	//CloseHandle(hProcess);
+
 	return true;
 }
