@@ -6,6 +6,8 @@
 #include <tlHelp32.h>
 
 
+bool GetOSInfo();
+
 // tech 1 ---> CreateRemoteThread
 bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID);
 

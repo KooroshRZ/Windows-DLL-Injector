@@ -2,14 +2,21 @@
 
 int main() {
 
-	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\SimpleDllInjector\\PayloadDLLBuild\\bin\\Win32\\Debug\\PayloadDLL.dll";
+
+	if (!GetOSInfo()) {
+		printf("Failed to get Windows NT version\n");
+		printf("LastError: 0x%x\n", GetLastError());
+	}
+
+
+	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\SimpleDllInjector\\PayloadDLLBuild\\bin\\x64\\Debug\\PayloadDLL.dll";
 	
 	char szProc[80];
 
 	printf("Target process name : ");
 	scanf_s("%79s", szProc, 79);
 
-	PROCESSENTRY32 PE32{ 0 };
+	PROCESSENTRY32 PE32{ sizeof(PROCESSENTRY32) };
 	PE32.dwSize = sizeof(PE32);
 
 	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
