@@ -1,5 +1,11 @@
 #include "Injector.h"
 
+#ifdef _WIN64
+	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\SimpleDllInjector\\PayloadDLLBuild\\bin\\x64\\Debug\\PayloadDLL.dll";
+#else
+	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\SimpleDllInjector\\PayloadDLLBuild\\bin\\Win32\\Debug\\PayloadDLL.dll";
+#endif
+
 int main() {
 
 
@@ -9,7 +15,7 @@ int main() {
 	}
 
 
-	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\SimpleDllInjector\\PayloadDLLBuild\\bin\\x64\\Debug\\PayloadDLL.dll";
+	//LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\SimpleDllInjector\\PayloadDLLBuild\\bin\\Win32\\Debug\\PayloadDLL.dll";
 	
 	char szProc[80];
 
@@ -47,6 +53,7 @@ int main() {
 	
 	//CreateRemoteThread_Type1(DllPath, PID);
 	NtCreateThreadEx_Type2(DllPath, PID);
+
 	system("PAUSE");
 	return 0;
 }

@@ -2,7 +2,12 @@
 
 bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
 
-	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, PID);
+	HANDLE hProcess = OpenProcess(
+		PROCESS_QUERY_INFORMATION |
+		PROCESS_CREATE_THREAD |
+		PROCESS_VM_OPERATION |
+		PROCESS_VM_WRITE,
+		FALSE, PID);
 
 	if (!hProcess) {
 		printf("Could not open Process for PID %d\n", PID);
@@ -44,6 +49,9 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
 		return false;
 	}
 
+	printf("Dll path memory was written at address : 0x%p\n", (void*)pDllPath);
+	Sleep(2000);
+
 	HANDLE hThread = CreateRemoteThread(hProcess, NULL, NULL, (LPTHREAD_START_ROUTINE)LoadLibAddr, pDllPath, 0, NULL);
 
 	if (!hThread) {
@@ -52,6 +60,7 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
 		system("PAUSE");
 		return false;
 	}
+
 	printf("Thread started with CreateRemoteThread\n");
 	Sleep(2000);
 

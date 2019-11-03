@@ -9,6 +9,13 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 		PROCESS_VM_WRITE,
 		FALSE, PID);
 
+	if (!hProcess) {
+		printf("Could not open Process for PID %d\n", PID);
+		printf("LastError : 0X%x\n", GetLastError());
+		system("PAUSE");
+		return false;
+	}
+
 	LPVOID LoadLibraryAddr = (LPVOID)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA");
 
 	if (!LoadLibraryAddr) {
@@ -20,6 +27,8 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 
 	printf("LoadLibraryA is located at real address: 0X%p\n", (void*)LoadLibraryAddr);
 	Sleep(2000);
+	system("PAUSE");
+	
 
 	LPVOID pDllPath = VirtualAllocEx(hProcess, NULL, strlen(DllPath), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
@@ -31,10 +40,12 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 	}
 
 	printf("Dll path memory allocated at: 0X%p\n", (void*)pDllPath);
-
 	Sleep(2000);
+	system("PAUSE");
+	
 
 	BOOL Written = WriteProcessMemory(hProcess, pDllPath, (LPVOID)DllPath, strlen(DllPath), NULL);
+
 
 	if (!Written) {
 		printf("Could not write into the allocated memory\n");
@@ -42,6 +53,10 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 		system("PAUSE");
 		return false;
 	}
+
+	printf("Dll path memory was written at address : 0x%p\n", (void*)pDllPath);
+	Sleep(2000);
+	system("PAUSE");
 
 	HMODULE modNtDll = GetModuleHandle("ntdll.dll");
 
@@ -66,9 +81,10 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 	memset(&ntBuffer, 0, sizeof(NtCreateThreadExBuffer));
 	LARGE_INTEGER  temp1 = { 0 };
 	LARGE_INTEGER  temp2 = { 0 };
-	HANDLE hThread;
+	HANDLE hThread = NULL;
 
-	// set function arguements
+	// set function arguements 32 bit
+	/*
 	ntBuffer.Size = sizeof(NtCreateThreadExBuffer);
 	ntBuffer.Unknown1 = 0x10003;
 	ntBuffer.Unknown2 = 0x8;
@@ -78,6 +94,18 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 	ntBuffer.Unknown6 = 4;
 	ntBuffer.Unknown7 = (DWORD*)&temp1;
 	ntBuffer.Unknown8 = 0;
+	*/
+
+
+	ntBuffer.cbSize = sizeof(NtCreateThreadExBuffer);
+	ntBuffer.Unknown = 65539;
+	ntBuffer.Unknown2 = 16;
+	ntBuffer.UnknownPtr = (N065C26D1*)&temp1;
+	ntBuffer.Unknown3 = 0;
+	ntBuffer.Unknown4 = 65540;
+	ntBuffer.Unknown5 = 8;
+	ntBuffer.UnknownPtr2 = (N065C26D1*)&temp1;;
+	ntBuffer.Unknown6 = 0;
 
 	NTSTATUS status = funNtCreateThreadEx(
 		&hThread,
@@ -102,6 +130,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 
 	printf("Thread started with NtCreateThread\n");
 	Sleep(2000);
+	system("PAUSE");
 
 	WaitForSingleObject(hThread, INFINITE);
 
