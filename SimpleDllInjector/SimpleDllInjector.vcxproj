@@ -131,7 +131,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\CreateRemoteThread.cpp" />
     <ClCompile Include="src\Injector.cpp" />
+    <ClCompile Include="src\NtCreateThreadEx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Injector.h" />

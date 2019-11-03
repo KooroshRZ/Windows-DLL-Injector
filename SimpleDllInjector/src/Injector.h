@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INJECTOR_H
+#define INJECOTR_H
 
 #include <stdio.h>
 #include <Windows.h>
@@ -40,3 +41,5 @@ typedef NTSTATUS(WINAPI* LPFUN_NtCreateThreadEx)(
 	OUT		LPVOID						lpBytesBuffer
 
 );
+
+#endif
