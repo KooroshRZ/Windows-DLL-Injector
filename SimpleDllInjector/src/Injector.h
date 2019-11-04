@@ -1,22 +1,31 @@
 #ifndef INJECTOR_H
 #define INJECOTR_H
 
+#define RTN_OK		0
+#define RTN_USAGE	1
+#define RTN_ERROR	13
+
 #include <stdio.h>
 #include <Windows.h>
 #include <tlHelp32.h>
 
 
+
+
 bool GetOSInfo();
+bool SetPrivilege(HANDLE hToken, LPCTSTR Privilege, BOOL bEnablePrivilege);
+void DisplayError(LPCSTR szAPI);
+int EscalatePrivilege();
 
 // tech 1 ---> CreateRemoteThread
-bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID);
+bool CreateRemoteThread_Type1(LPCSTR DllPath, HANDLE hProcess);
 
 
 // tech 2 ---> NtCreateThreadEx
-bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID);
+bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess);
 
 
-/*struct NtCreateThreadExBuffer {
+struct NtCreateThreadExBuffer {
 	ULONG		Size;
 	ULONG		Unknown1;
 	ULONG		Unknown2;
@@ -26,8 +35,9 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID);
 	ULONG		Unknown6;
 	PULONG		Unknown7;
 	ULONG		Unknown8;
-};*/
+};
 
+/*
 struct N065C26D1 {
 	char buf[64];
 };
@@ -44,7 +54,7 @@ struct NtCreateThreadExBuffer
 	N065C26D1* UnknownPtr2; //0x0038 => pointer to zero memory(64b).
 	__int64 Unknown6; //0x0040 => zero
 
-};//Size=0x0048
+};*/
 
 typedef NTSTATUS(WINAPI* LPFUN_NtCreateThreadEx)(
 

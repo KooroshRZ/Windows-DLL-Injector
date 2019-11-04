@@ -1,20 +1,8 @@
 #include "Injector.h"
 
-bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
+bool CreateRemoteThread_Type1(LPCSTR DllPath, HANDLE hProcess) {
 
-	HANDLE hProcess = OpenProcess(
-		PROCESS_QUERY_INFORMATION |
-		PROCESS_CREATE_THREAD |
-		PROCESS_VM_OPERATION |
-		PROCESS_VM_WRITE,
-		FALSE, PID);
-
-	if (!hProcess) {
-		printf("Could not open Process for PID %d\n", PID);
-		printf("LastError : 0X%x\n", GetLastError());
-		system("PAUSE");
-		return false;
-	}
+	
 
 	LPVOID LoadLibAddr = (LPVOID)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA");
 
@@ -73,8 +61,6 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, DWORD PID) {
 	}
 
 	CloseHandle(hThread);
-
-	CloseHandle(hProcess);
 
 	return true;
 }

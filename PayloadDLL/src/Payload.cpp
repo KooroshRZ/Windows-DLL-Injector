@@ -20,8 +20,8 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 		case DLL_PROCESS_ATTACH:
-			//MessageBox(0, "Hello I'm DLL injected inside you !!!", "DLL_PROCESS_ATTACH", MB_ICONINFORMATION);
-			std::cout << "Hello I'm injected inside you in DLL_PROCESS_ATTACH mode" << std::endl;
+			MessageBox(0, "Hello I'm DLL injected inside you !!!", "DLL_PROCESS_ATTACH", MB_ICONINFORMATION);
+			//std::cout << "Hello I'm injected inside you in DLL_PROCESS_ATTACH mode" << std::endl;
 			break;
 		case DLL_THREAD_ATTACH:
 			//MessageBox(0, "Hello I'm DLL injected inside you GOOGLE CHROME !!!", "DLL_THREAD_ATTACH", MB_ICONINFORMATION);

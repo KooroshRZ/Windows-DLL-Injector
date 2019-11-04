@@ -1,20 +1,7 @@
 #include "Injector.h"
 
-bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
+bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 
-	HANDLE hProcess = OpenProcess(
-		PROCESS_QUERY_INFORMATION |
-		PROCESS_CREATE_THREAD |
-		PROCESS_VM_OPERATION |
-		PROCESS_VM_WRITE,
-		FALSE, PID);
-
-	if (!hProcess) {
-		printf("Could not open Process for PID %d\n", PID);
-		printf("LastError : 0X%x\n", GetLastError());
-		system("PAUSE");
-		return false;
-	}
 
 	LPVOID LoadLibraryAddr = (LPVOID)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA");
 
@@ -84,7 +71,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 	HANDLE hThread = NULL;
 
 	// set function arguements 32 bit
-	/*
+	
 	ntBuffer.Size = sizeof(NtCreateThreadExBuffer);
 	ntBuffer.Unknown1 = 0x10003;
 	ntBuffer.Unknown2 = 0x8;
@@ -94,10 +81,10 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 	ntBuffer.Unknown6 = 4;
 	ntBuffer.Unknown7 = (DWORD*)&temp1;
 	ntBuffer.Unknown8 = 0;
-	*/
+	
 
 
-	ntBuffer.cbSize = sizeof(NtCreateThreadExBuffer);
+	/*ntBuffer.cbSize = sizeof(NtCreateThreadExBuffer);
 	ntBuffer.Unknown = 65539;
 	ntBuffer.Unknown2 = 16;
 	ntBuffer.UnknownPtr = (N065C26D1*)&temp1;
@@ -106,7 +93,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, DWORD PID) {
 	ntBuffer.Unknown5 = 8;
 	ntBuffer.UnknownPtr2 = (N065C26D1*)&temp1;;
 	ntBuffer.Unknown6 = 0;
-
+	*/
 	NTSTATUS status = funNtCreateThreadEx(
 		&hThread,
 		0x1FFFFF,
