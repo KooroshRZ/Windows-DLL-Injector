@@ -14,10 +14,10 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 
 	printf("LoadLibraryA is located at real address: 0X%p\n", (void*)LoadLibraryAddr);
 	Sleep(2000);
-	system("PAUSE");
+	//system("PAUSE");
 	
 
-	LPVOID pDllPath = VirtualAllocEx(hProcess, NULL, strlen(DllPath), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	LPVOID pDllPath = VirtualAllocEx(hProcess, 0, strlen(DllPath), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
 	if (!pDllPath) {
 		printf("Could not allocate Memory in target process\n");
@@ -28,7 +28,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 
 	printf("Dll path memory allocated at: 0X%p\n", (void*)pDllPath);
 	Sleep(2000);
-	system("PAUSE");
+	//system("PAUSE");
 	
 
 	BOOL Written = WriteProcessMemory(hProcess, pDllPath, (LPVOID)DllPath, strlen(DllPath), NULL);
@@ -43,7 +43,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 
 	printf("Dll path memory was written at address : 0x%p\n", (void*)pDllPath);
 	Sleep(2000);
-	system("PAUSE");
+	//system("PAUSE");
 
 	HMODULE modNtDll = GetModuleHandle("ntdll.dll");
 
@@ -94,6 +94,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	ntBuffer.UnknownPtr2 = (N065C26D1*)&temp1;;
 	ntBuffer.Unknown6 = 0;
 	*/
+
 	NTSTATUS status = funNtCreateThreadEx(
 		&hThread,
 		0x1FFFFF,
@@ -117,7 +118,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 
 	printf("Thread started with NtCreateThread\n");
 	Sleep(2000);
-	system("PAUSE");
+	//system("PAUSE");
 
 	WaitForSingleObject(hThread, INFINITE);
 

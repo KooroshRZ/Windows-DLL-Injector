@@ -16,7 +16,7 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, HANDLE hProcess) {
 	printf("LoadLibraryA is located at real address: 0X%p\n", (void*)LoadLibAddr);
 	Sleep(2000);
 
-	LPVOID pDllPath = VirtualAllocEx(hProcess, NULL, strlen(DllPath), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	LPVOID pDllPath = VirtualAllocEx(hProcess, 0, strlen(DllPath), MEM_COMMIT, PAGE_READWRITE);
 
 	if (!pDllPath) {
 		printf("Could not allocate Memory in target process\n");

@@ -1,9 +1,9 @@
 #include "Injector.h"
 
 #ifdef _WIN64
-	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\SimpleDllInjector\\PayloadDLLBuild\\bin\\x64\\Debug\\PayloadDLL.dll";
+	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadDLLBuild\\bin\\x64\\Debug\\PayloadDLL.dll";
 #else
-	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\SimpleDllInjector\\PayloadDLLBuild\\bin\\Win32\\Debug\\PayloadDLL.dll";
+	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadDLLBuild\\bin\\Win32\\Debug\\PayloadDLL.dll";
 #endif
 
 // variables for Privilege Escalation
@@ -12,12 +12,13 @@ int dwRetVal = RTN_OK;
 
 int main() {
 
-
+	
 	if (!GetOSInfo()) {
 		printf("Failed to get Windows NT version\n");
 		printf("LastError: 0x%x\n", GetLastError());
 	}
 
+	
 	printf("escalating Privileges...\n");
 	Sleep(2000);
 	int epResult = EscalatePrivilege();
@@ -25,7 +26,7 @@ int main() {
 
 	if (epResult == RTN_OK)
 		printf("Successfully Escalated privileges to SYSTEM level...\n");
-
+	
 	char szProc[80];
 
 	printf("Target process name : ");
@@ -67,6 +68,9 @@ int main() {
 		PROCESS_VM_OPERATION |
 		PROCESS_VM_WRITE,
 		FALSE, PID);
+		
+
+	//HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, PID);
 
 	if (!hProcess) {
 		printf("Could not open Process for PID %d\n", PID);
@@ -78,19 +82,21 @@ int main() {
 	// disable SeDebugPrivilege
 	SetPrivilege(hToken, SE_DEBUG_NAME, FALSE);
 
+	
+
+	// close handles
+	CloseHandle(hToken);
+
+	//CreateRemoteThread_Type1(DllPath, hProcess);
+	NtCreateThreadEx_Type2(DllPath, hProcess);
+
+	CloseHandle(hProcess);
+
 	if (!TerminateProcess(hProcess, 0xffffffff))
 	{
 		DisplayError("TerminateProcess");
 		dwRetVal = RTN_ERROR;
 	}
-
-	// close handles
-	CloseHandle(hToken);
-
-	CreateRemoteThread_Type1(DllPath, hProcess);
-	//NtCreateThreadEx_Type2(DllPath, PID);
-
-	CloseHandle(hProcess);
 
 	return 0;
 }
@@ -104,8 +110,6 @@ bool SetPrivilege(HANDLE hToken, LPCTSTR Privilege, BOOL bEnablePrivilege){
 	DWORD cbPrevious = sizeof(TOKEN_PRIVILEGES);
 
 	if (!LookupPrivilegeValue(NULL, Privilege, &luid)) return false;
-
-	
 
 	// First pass. get current privilege settings
 	tp.PrivilegeCount				= 1;
@@ -183,7 +187,6 @@ void DisplayError(LPCSTR szAPI) {
 	DWORD dwBufferLength;
 
 	fprintf(stderr, "%s() error!\n", szAPI);
-	system("PAUSE");
 
 	if (dwBufferLength = FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
