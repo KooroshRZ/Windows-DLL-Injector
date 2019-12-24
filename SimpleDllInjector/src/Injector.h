@@ -56,7 +56,7 @@ struct NtCreateThreadExBuffer
 
 };*/
 
-typedef NTSTATUS(WINAPI* LPFUN_NtCreateThreadEx)(
+/*typedef NTSTATUS(WINAPI* LPFUN_NtCreateThreadEx)(
 
 	OUT		PHANDLE						hThread,
 	IN		ACCESS_MASK					DesiredAccess,
@@ -70,6 +70,22 @@ typedef NTSTATUS(WINAPI* LPFUN_NtCreateThreadEx)(
 	IN		ULONG						SizeOfStackReserve,
 	OUT		LPVOID						lpBytesBuffer
 
+);*/
+
+
+using LPFUN_NtCreateThreadEx = NTSTATUS(__stdcall*)(
+	HANDLE *		pHandle,
+	ACCESS_MASK		DesiredAccess,
+	void *			pAttr,
+	HANDLE			hProc,
+	void *			pFunc,
+	void *			pArg,
+	ULONG			Flags,
+	SIZE_T			ZeroBits,
+	SIZE_T			StackSize,
+	SIZE_T			MaxStackSize,
+	void *			pAttrListOut
 );
+
 
 #endif

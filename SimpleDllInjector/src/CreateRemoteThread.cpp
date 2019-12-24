@@ -14,7 +14,7 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, HANDLE hProcess) {
 	}
 
 	printf("LoadLibraryA is located at real address: 0X%p\n", (void*)LoadLibAddr);
-	Sleep(2000);
+	Sleep(1000);
 
 	LPVOID pDllPath = VirtualAllocEx(hProcess, 0, strlen(DllPath), MEM_COMMIT, PAGE_READWRITE);
 
@@ -26,7 +26,7 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, HANDLE hProcess) {
 	}
 
 	printf("Dll path memory allocated at: 0X%p\n", (void*)pDllPath);
-	Sleep(2000);
+	Sleep(1000);
 
 	BOOL Written = WriteProcessMemory(hProcess, pDllPath, (LPVOID)DllPath, strlen(DllPath), NULL);
 
@@ -38,7 +38,7 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, HANDLE hProcess) {
 	}
 
 	printf("Dll path memory was written at address : 0x%p\n", (void*)pDllPath);
-	Sleep(2000);
+	Sleep(1000);
 
 	HANDLE hThread = CreateRemoteThread(hProcess, NULL, NULL, (LPTHREAD_START_ROUTINE)LoadLibAddr, pDllPath, 0, NULL);
 
@@ -50,14 +50,14 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, HANDLE hProcess) {
 	}
 
 	printf("Thread started with CreateRemoteThread\n");
-	Sleep(2000);
+	Sleep(1000);
 
 	WaitForSingleObject(hThread, INFINITE);
 
 	if (VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE)) {
 		//VirtualFreeEx(hProc, reinterpret_cast<int*>(pDllPath) + 0X010000, 0, MEM_RELEASE);
 		printf("Memory was freed in target process\n");
-		Sleep(2000);
+		Sleep(1000);
 	}
 
 	CloseHandle(hThread);

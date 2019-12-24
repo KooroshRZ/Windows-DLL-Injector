@@ -23,6 +23,7 @@
     <ProjectGuid>{A37A7D73-ECD3-4F67-8343-907881F34DA3}</ProjectGuid>
     <RootNamespace>PayloadDLL</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <ProjectName>Payload</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -78,8 +79,8 @@
     <IntDir>$(SolutionDir)PayloadDLLBuild\bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)PayloadDLLBuild\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)PayloadDLLBuild\bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)PayloadBuild\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)PayloadBuild\bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)PayloadDLLBuild\bin\$(Platform)\$(Configuration)\</OutDir>

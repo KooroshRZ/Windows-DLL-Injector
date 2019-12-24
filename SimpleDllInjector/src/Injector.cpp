@@ -1,9 +1,9 @@
 #include "Injector.h"
 
 #ifdef _WIN64
-	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadDLLBuild\\bin\\x64\\Debug\\PayloadDLL.dll";
+	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadBuild\\bin\\x64\\Debug\\Payload.dll";
 #else
-	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadDLLBuild\\bin\\Win32\\Debug\\PayloadDLL.dll";
+	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadBuild\\bin\\Win32\\Debug\\Payload.dll";
 #endif
 
 // variables for Privilege Escalation
@@ -67,7 +67,7 @@ int main() {
 		PROCESS_CREATE_THREAD |
 		PROCESS_VM_OPERATION |
 		PROCESS_VM_WRITE,
-		FALSE, PID);
+		FALSE, 352);
 		
 
 	//HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, PID);

@@ -13,7 +13,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	}
 
 	printf("LoadLibraryA is located at real address: 0X%p\n", (void*)LoadLibraryAddr);
-	Sleep(2000);
+	Sleep(1000);
 	//system("PAUSE");
 	
 
@@ -27,7 +27,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	}
 
 	printf("Dll path memory allocated at: 0X%p\n", (void*)pDllPath);
-	Sleep(2000);
+	Sleep(1000);
 	//system("PAUSE");
 	
 
@@ -42,13 +42,13 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	}
 
 	printf("Dll path memory was written at address : 0x%p\n", (void*)pDllPath);
-	Sleep(2000);
+	Sleep(1000);
 	//system("PAUSE");
 
 	HMODULE modNtDll = GetModuleHandle("ntdll.dll");
 
 	if (!modNtDll) {
-		printf("Failed to get moduke handle for ntdll.dll");
+		printf("Failed to get moduke handle for ntdll.dll\n");
 		printf("LastError : 0X%x\n", GetLastError());
 		system("PASUE");
 		return false;
@@ -66,13 +66,28 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	NtCreateThreadExBuffer ntBuffer;
 
 	memset(&ntBuffer, 0, sizeof(NtCreateThreadExBuffer));
-	LARGE_INTEGER  temp1 = { 0 };
-	LARGE_INTEGER  temp2 = { 0 };
-	HANDLE hThread = NULL;
+	//LARGE_INTEGER  temp1 = { 0 };
+	//LARGE_INTEGER  temp2 = { 0 };
+	//HANDLE hThread = nullptr;
 
+#ifdef _WIN64
+	memset(&ntBuffer, 0, sizeof(NtCreateThreadExBuffer));
+	ULONG temp0[2];
+	ULONG temp1;
+
+	ntBuffer.Size = sizeof(NtCreateThreadExBuffer);
+	ntBuffer.Unknown1 = 0x10003;
+	ntBuffer.Unknown2 = sizeof(temp0);
+	ntBuffer.Unknown3 = temp0;
+	ntBuffer.Unknown4 = 0;
+	ntBuffer.Unknown5 = 0x10004;
+	ntBuffer.Unknown6 = sizeof(temp1);
+	ntBuffer.Unknown7 = &temp1;
+	ntBuffer.Unknown8 = 0;
+#endif
 	// set function arguements 32 bit
 	
-	ntBuffer.Size = sizeof(NtCreateThreadExBuffer);
+	/*ntBuffer.Size = sizeof(NtCreateThreadExBuffer);
 	ntBuffer.Unknown1 = 0x10003;
 	ntBuffer.Unknown2 = 0x8;
 	ntBuffer.Unknown3 = (DWORD*)&temp2;
@@ -81,7 +96,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	ntBuffer.Unknown6 = 4;
 	ntBuffer.Unknown7 = (DWORD*)&temp1;
 	ntBuffer.Unknown8 = 0;
-	
+	*/
 
 
 	/*ntBuffer.cbSize = sizeof(NtCreateThreadExBuffer);
@@ -95,29 +110,38 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	ntBuffer.Unknown6 = 0;
 	*/
 
-	NTSTATUS status = funNtCreateThreadEx(
+	HANDLE hThread = nullptr;
+	funNtCreateThreadEx(&hThread, THREAD_ALL_ACCESS, nullptr, hProcess, (LPTHREAD_START_ROUTINE)LoadLibraryAddr
+		, pDllPath, NULL, 0, 0, 0, nullptr);
+
+	/*NTSTATUS status = funNtCreateThreadEx(
 		&hThread,
-		0x1FFFFF,
-		NULL,
+		THREAD_ALL_ACCESS,
+		nullptr,
 		hProcess,
 		(LPTHREAD_START_ROUTINE)LoadLibraryAddr,
 		pDllPath,
-		FALSE, //start instantly
-		NULL,
-		NULL,
-		NULL,
+		NULL, //start instantly
+		0,
+		0,
+		0,
 		&ntBuffer
-	);
+	);*/
 
 	if (!hThread) {
-		printf("\n NtCreateThreadEx failed\n");
-		printf("LastError: 0X%x", GetLastError());
+		printf("\nNtCreateThreadEx failed\n");
+		printf("LastError: 0X%x\n", GetLastError());
+		if (VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE)) {
+			//VirtualFreeEx(hProc, reinterpret_cast<int*>(pDllPath) + 0X010000, 0, MEM_RELEASE);
+			printf("Memory was freed in target process\n");
+			Sleep(1000);
+		}
 		system("PAUSE");
 		return false;
 	}
 
 	printf("Thread started with NtCreateThread\n");
-	Sleep(2000);
+	Sleep(1000);
 	//system("PAUSE");
 
 	WaitForSingleObject(hThread, INFINITE);
@@ -125,7 +149,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	if (VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE)) {
 		//VirtualFreeEx(hProc, reinterpret_cast<int*>(pDllPath) + 0X010000, 0, MEM_RELEASE);
 		printf("Memory was freed in target process\n");
-		Sleep(2000);
+		Sleep(1000);
 	}
 
 	CloseHandle(hThread);
