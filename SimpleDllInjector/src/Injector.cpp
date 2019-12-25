@@ -1,23 +1,20 @@
 #include "Injector.h"
 
 #ifdef _WIN64
-	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadBuild\\bin\\x64\\Debug\\Payload.dll";
+	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadDLLBuild\\bin\\x64\\Debug\\PayloadDLL.dll";
 #else
-	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadBuild\\bin\\Win32\\Debug\\Payload.dll";
+	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadDLLBuild\\bin\\Win32\\Debug\\PayloadDLL.dll";
 #endif
-
 // variables for Privilege Escalation
 HANDLE hToken;
 int dwRetVal = RTN_OK;
 
 int main() {
 
-	
 	if (!GetOSInfo()) {
 		printf("Failed to get Windows NT version\n");
 		printf("LastError: 0x%x\n", GetLastError());
 	}
-
 	
 	printf("escalating Privileges...\n");
 	Sleep(2000);
@@ -48,6 +45,7 @@ int main() {
 
 	while (bRet) {
 
+		//printf("process: %s\n", PE32.szExeFile);
 		if (!strcmp((LPCSTR)szProc, PE32.szExeFile)) {
 			PID = PE32.th32ProcessID;
 			break;
@@ -57,18 +55,25 @@ int main() {
 
 	CloseHandle(hSnap);
 
-
 	printf("Target Program PID: %d\n", PID);
 	Sleep(2000);
 	system("PAUSE");
+
+	int InjectionMethod = -1;
+
+	printf("\n");
+	printf("   1) CreateRemoteThread\n");
+	printf("   2) NtCreateThread\n");
+	printf("\n");
+	printf("Enter the Injection method: ");
+	scanf("%d", &InjectionMethod);
 
 	HANDLE hProcess = OpenProcess(
 		PROCESS_QUERY_INFORMATION |
 		PROCESS_CREATE_THREAD |
 		PROCESS_VM_OPERATION |
 		PROCESS_VM_WRITE,
-		FALSE, 352);
-		
+		FALSE, PID);	
 
 	//HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, PID);
 
@@ -82,13 +87,19 @@ int main() {
 	// disable SeDebugPrivilege
 	SetPrivilege(hToken, SE_DEBUG_NAME, FALSE);
 
-	
-
 	// close handles
 	CloseHandle(hToken);
 
-	//CreateRemoteThread_Type1(DllPath, hProcess);
-	NtCreateThreadEx_Type2(DllPath, hProcess);
+	switch (InjectionMethod)
+	{
+		case 1:
+			CreateRemoteThread_Type1(DllPath, hProcess);
+			break;
+		case 2:
+			NtCreateThreadEx_Type2(DllPath, hProcess);
+			break;
+	}
+	
 
 	CloseHandle(hProcess);
 

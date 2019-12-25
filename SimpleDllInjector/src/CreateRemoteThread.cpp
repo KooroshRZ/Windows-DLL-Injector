@@ -2,8 +2,6 @@
 
 bool CreateRemoteThread_Type1(LPCSTR DllPath, HANDLE hProcess) {
 
-	
-
 	LPVOID LoadLibAddr = (LPVOID)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA");
 
 	if (!LoadLibAddr) {
@@ -53,6 +51,7 @@ bool CreateRemoteThread_Type1(LPCSTR DllPath, HANDLE hProcess) {
 	Sleep(1000);
 
 	WaitForSingleObject(hThread, INFINITE);
+	system("PAUSE");
 
 	if (VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE)) {
 		//VirtualFreeEx(hProc, reinterpret_cast<int*>(pDllPath) + 0X010000, 0, MEM_RELEASE);

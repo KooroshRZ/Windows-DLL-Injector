@@ -2,7 +2,7 @@
 
 void LogMessage(const char* message) {
 
-	std::cout << message << std::endl;
+	printf("%s\n", message);
 
 }
 
@@ -21,23 +21,23 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	{
 		case DLL_PROCESS_ATTACH:
 			//MessageBox(0, "Hello I'm DLL injected inside you !!!", "DLL_PROCESS_ATTACH", MB_ICONINFORMATION);
-			//std::cout << "Hello I'm injected inside you in DLL_PROCESS_ATTACH mode" << std::endl;
-			exit(1);
+			LogMessage("Hello I'm DLL injected inside you in DLL_PROCESS_ATTACH mode!!!");
+			//exit(1);
 			break;
 		case DLL_THREAD_ATTACH:
 			//MessageBox(0, "Hello I'm DLL injected inside you GOOGLE CHROME !!!", "DLL_THREAD_ATTACH", MB_ICONINFORMATION);
 			//std::cout << "Hello I'm injected inside you in DLL_THREAD_ATTACH mode" << std::endl;
-			exit(1);
+			//exit(1);
 			break;
 		case DLL_THREAD_DETACH:
 			//MessageBox(0, "Hello I'm DLL injected inside you GOOGLE CHROME !!!", "DLL_THREAD_DETACH", MB_ICONINFORMATION);
 			//std::cout << "Hello I'm injected inside you in DLL_THREAD_DETACH mode" << std::endl;
-			exit(1);
+			//exit(1);
 			break;
 		case DLL_PROCESS_DETACH:
 			//MessageBox(0, "Hello I'm DLL injected inside you !!!", "DLL_PROCESS_DETACH", MB_ICONINFORMATION);
 			//std::cout << "Hello I'm injected inside you in DLL_PROCESS_DETACH mode" << std::endl;
-			exit(1);
+			//exit(1);
 			break;
 	}
 

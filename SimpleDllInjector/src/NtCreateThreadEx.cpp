@@ -63,14 +63,10 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 		return false;
 	}
 
+#ifdef DEBUG_NTBUFFER
+
 	NtCreateThreadExBuffer ntBuffer;
 
-	memset(&ntBuffer, 0, sizeof(NtCreateThreadExBuffer));
-	//LARGE_INTEGER  temp1 = { 0 };
-	//LARGE_INTEGER  temp2 = { 0 };
-	//HANDLE hThread = nullptr;
-
-#ifdef _WIN64
 	memset(&ntBuffer, 0, sizeof(NtCreateThreadExBuffer));
 	ULONG temp0[2];
 	ULONG temp1;
@@ -85,36 +81,10 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	ntBuffer.Unknown7 = &temp1;
 	ntBuffer.Unknown8 = 0;
 #endif
-	// set function arguements 32 bit
-	
-	/*ntBuffer.Size = sizeof(NtCreateThreadExBuffer);
-	ntBuffer.Unknown1 = 0x10003;
-	ntBuffer.Unknown2 = 0x8;
-	ntBuffer.Unknown3 = (DWORD*)&temp2;
-	ntBuffer.Unknown4 = 0;
-	ntBuffer.Unknown5 = 0x10004;
-	ntBuffer.Unknown6 = 4;
-	ntBuffer.Unknown7 = (DWORD*)&temp1;
-	ntBuffer.Unknown8 = 0;
-	*/
-
-
-	/*ntBuffer.cbSize = sizeof(NtCreateThreadExBuffer);
-	ntBuffer.Unknown = 65539;
-	ntBuffer.Unknown2 = 16;
-	ntBuffer.UnknownPtr = (N065C26D1*)&temp1;
-	ntBuffer.Unknown3 = 0;
-	ntBuffer.Unknown4 = 65540;
-	ntBuffer.Unknown5 = 8;
-	ntBuffer.UnknownPtr2 = (N065C26D1*)&temp1;;
-	ntBuffer.Unknown6 = 0;
-	*/
 
 	HANDLE hThread = nullptr;
-	funNtCreateThreadEx(&hThread, THREAD_ALL_ACCESS, nullptr, hProcess, (LPTHREAD_START_ROUTINE)LoadLibraryAddr
-		, pDllPath, NULL, 0, 0, 0, nullptr);
 
-	/*NTSTATUS status = funNtCreateThreadEx(
+	NTSTATUS status = funNtCreateThreadEx(
 		&hThread,
 		THREAD_ALL_ACCESS,
 		nullptr,
@@ -125,8 +95,8 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 		0,
 		0,
 		0,
-		&ntBuffer
-	);*/
+		nullptr
+	);
 
 	if (!hThread) {
 		printf("\nNtCreateThreadEx failed\n");
@@ -145,6 +115,8 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	//system("PAUSE");
 
 	WaitForSingleObject(hThread, INFINITE);
+
+	system("PAUSE");
 
 	if (VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE)) {
 		//VirtualFreeEx(hProc, reinterpret_cast<int*>(pDllPath) + 0X010000, 0, MEM_RELEASE);

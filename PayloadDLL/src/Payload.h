@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <stdio.h>
 #include <Windows.h>
 
 __declspec(dllexport) void LogMessage(const char* message);
