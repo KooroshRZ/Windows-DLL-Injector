@@ -10,7 +10,7 @@
 #include <tlHelp32.h>
 
 
-//#define DEBUG_NTBUFFER
+#define DEBUG_NTBUFFER
 
 bool GetOSInfo();
 bool SetPrivilege(HANDLE hToken, LPCTSTR Privilege, BOOL bEnablePrivilege);
@@ -55,8 +55,5 @@ typedef NTSTATUS(WINAPI* LPFUN_NtCreateThreadEx)(
 	IN		SIZE_T				SizeOfStackReserve,
 	OUT		LPVOID				lpBytesBuffer
 );
-
-
-
 
 #endif

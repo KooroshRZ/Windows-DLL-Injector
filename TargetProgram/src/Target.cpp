@@ -18,7 +18,7 @@ int main() {
 	}*/
 
 	while (true) {
-		std::cout << "Doing somthing!\n";
+		std::cout << "Doing something!\n";
 		Sleep(1000);
 	}
 
