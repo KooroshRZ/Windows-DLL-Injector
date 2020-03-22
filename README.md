@@ -9,11 +9,11 @@ In abuse cases it can be used to hide malicious activity in another process and 
 
 each one has it's pros and cons
 
-Here we have implemented 2 techniques
+Here we have implemented 3 techniques
 
 - [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CreatRemoteRhreate (windows Win32 API through windows.h)
 - [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NtCreatThread (wnidows native API through ntdll.dll)
-- [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QueueUserAPC
+- [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QueueUserAPC
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SetWindowsHookEx
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RtlCreateUserThread
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SetThreadContext
@@ -44,6 +44,18 @@ Cons.\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A little hard to implement and debug\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; no official documentation
 
+# QueueUserAPC
+This method is about hijacking and using a thread in target process\
+As documented in msdn this the function call QueueUserAPC() adds user-mode asychronous procedure call(APC) object to the APC queue of specified thread\
+Actually we don't create our own thread and just use the target process's threads for loading our dll into the process address space
+
+Pros.\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp No need for creating new Threads\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp It adds some stealthy abilities for injection (cause no new thead would be created)
+
+Cons.\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp Not always possible on all threads\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp Not sure about which threads can be used :/!
 
 <br><br>
 # Credit
