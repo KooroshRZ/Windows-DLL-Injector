@@ -64,6 +64,7 @@ int main() {
 	printf("\n");
 	printf("   1) CreateRemoteThread\n");
 	printf("   2) NtCreateThread\n");
+	printf("   3) QueueUserAPC\n");
 	printf("\n");
 	printf("Enter the Injection method: ");
 	scanf("%d", &InjectionMethod);
@@ -98,6 +99,8 @@ int main() {
 		case 2:
 			NtCreateThreadEx_Type2(DllPath, hProcess);
 			break;
+		case 3:
+			QueueUserAPC_Type3(DllPath, hProcess, PID);
 	}
 	
 

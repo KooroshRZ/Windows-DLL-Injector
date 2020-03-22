@@ -56,4 +56,7 @@ typedef NTSTATUS(WINAPI* LPFUN_NtCreateThreadEx)(
 	OUT		LPVOID				lpBytesBuffer
 );
 
+// tech 3 ---> QueueUserAPC
+bool QueueUserAPC_Type3(LPCSTR DllPath, HANDLE hProcess, DWORD processId);
+
 #endif
