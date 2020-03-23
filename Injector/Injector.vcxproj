@@ -139,6 +139,7 @@
     <ClCompile Include="src\GetOperatingSystemInfo.cpp" />
     <ClCompile Include="src\Injector.cpp" />
     <ClCompile Include="src\NtCreateThreadEx.cpp" />
+    <ClCompile Include="src\QueueUserAPC.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Injector.h" />

@@ -47,15 +47,15 @@ Cons.\
 # QueueUserAPC
 This method is about hijacking and using a thread in target process\
 As documented in msdn this the function call QueueUserAPC() adds user-mode asychronous procedure call(APC) object to the APC queue of specified thread\
-Actually we don't create our own thread and just use the target process's threads for loading our dll into the process address space
+Actually we don't create our own thread and just use the target process's threads for loading our dll into the process address space\
+Notice that to make this method work, The remote target thread should be in suspended state and with alertable flag (Example SleepEx() in TargetProgram.cpp)
 
 Pros.\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp No need for creating new Threads\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp It adds some stealthy abilities for injection (cause no new thead would be created)
 
 Cons.\
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp Not always possible on all threads\
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp Not sure about which threads can be used :/!
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp Not always possible on all threads just suspended threads with alertable flag\
 
 <br><br>
 # Credit
