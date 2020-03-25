@@ -9,12 +9,12 @@ In abuse cases it can be used to hide malicious activity in another process and 
 
 each one has it's pros and cons
 
-Here we have implemented 3 techniques
+Here we have implemented 4/7 techniques
 
 - [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CreatRemoteRhreate (windows Win32 API through windows.h)
 - [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NtCreatThread (wnidows native API through ntdll.dll)
 - [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QueueUserAPC
-- [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SetWindowsHookEx
+- [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SetWindowsHookEx
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RtlCreateUserThread
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SetThreadContext
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ReflectiveDllInjection
@@ -56,6 +56,20 @@ Pros.\
 
 Cons.\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Not always possible on all threads (just suspended threads with alertable flag)
+
+# SetWindowsHookEx
+This method actually is for setting Windows Hook for specific events like keyboard or mouse event\
+But since the hook procedure should be in form of exported function in a dll file in the target process,\
+This makes it possible to use it as a dll injection method\
+This one is kinda different one because neither thread nor APC is created but A hook is set in target process for a specific thread
+
+Pros.\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No need for creating new Threads or APC call\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Easy to use spcially with thread ID equals 0 :)
+
+Cons.\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Too suspicious for antivirus detection because of using hooks
+
 
 <br><br>
 # Credit
