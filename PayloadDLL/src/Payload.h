@@ -4,3 +4,4 @@
 #include <Windows.h>
 
 __declspec(dllexport) void LogMessage(const char* message);
+extern "C" __declspec(dllexport) void HookProcedure();

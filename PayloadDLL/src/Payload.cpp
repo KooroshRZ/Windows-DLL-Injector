@@ -6,6 +6,13 @@ void LogMessage(const char* message) {
 
 }
 
+extern "C" __declspec(dllexport) void HookProcedure() {
+
+	printf("Injected via SetWindowsHookEx");
+	MessageBox(0, "Hello I'm DLL injected inside you !!!", "SetWindowsHookEx", MB_ICONINFORMATION);
+
+}
+
 BOOL APIENTRY DllMain(HMODULE hModule,
 	DWORD ul_reason_for_call,
 	LPVOID lpReserved
@@ -21,7 +28,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	{
 		case DLL_PROCESS_ATTACH:
 			//MessageBox(0, "Hello I'm DLL injected inside you !!!", "DLL_PROCESS_ATTACH", MB_ICONINFORMATION);
-			LogMessage("Hello I'm DLL injected inside you in DLL_PROCESS_ATTACH mode!!!");
+			//LogMessage("Hello I'm DLL injected inside you in DLL_PROCESS_ATTACH mode!!!");
 			//exit(1);
 			break;
 		case DLL_THREAD_ATTACH:

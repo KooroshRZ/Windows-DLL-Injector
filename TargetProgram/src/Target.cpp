@@ -19,7 +19,7 @@ int main() {
 
 	while (true) {
 		std::cout << "Doing something!\n";
-		SleepEx(10000, true);// Call Sleep function with alertable flag to put the thread in suspended state for using in QueueUserAPC method
+		SleepEx(1000, true);// Call Sleep function with alertable flag to put the thread in suspended state for using in QueueUserAPC method
 	}
 
 }

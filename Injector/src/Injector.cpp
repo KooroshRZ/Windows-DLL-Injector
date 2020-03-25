@@ -65,6 +65,7 @@ int main() {
 	printf("   1) CreateRemoteThread\n");
 	printf("   2) NtCreateThread\n");
 	printf("   3) QueueUserAPC\n");
+	printf("   4) SetWindowsHookEx\n");
 	printf("\n");
 	printf("Enter the Injection method: ");
 	scanf("%d", &InjectionMethod);
@@ -101,6 +102,12 @@ int main() {
 			break;
 		case 3:
 			QueueUserAPC_Type3(DllPath, hProcess, PID);
+		case 4:
+			SetWindowsHookEx_type4(PID, DllPath);
+			break;
+		default:
+			printf("Choose a valid mathod\n");
+			break;
 	}
 	
 

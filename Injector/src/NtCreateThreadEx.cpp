@@ -48,7 +48,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	HMODULE modNtDll = GetModuleHandle("ntdll.dll");
 
 	if (!modNtDll) {
-		printf("Failed to get moduke handle for ntdll.dll\n");
+		printf("Failed to get module handle for ntdll.dll\n");
 		printf("LastError : 0X%x\n", GetLastError());
 		system("PASUE");
 		return false;

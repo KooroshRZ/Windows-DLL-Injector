@@ -59,4 +59,7 @@ typedef NTSTATUS(WINAPI* LPFUN_NtCreateThreadEx)(
 // tech 3 ---> QueueUserAPC
 bool QueueUserAPC_Type3(LPCSTR DllPath, HANDLE hProcess, DWORD processId);
 
+// tech 4 ---> SetWindowsHookEx
+bool SetWindowsHookEx_type4(DWORD processId, LPCSTR dllPath);
+
 #endif
