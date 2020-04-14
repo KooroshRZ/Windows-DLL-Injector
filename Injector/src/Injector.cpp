@@ -2,8 +2,10 @@
 
 #ifdef _WIN64
 	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadDLLBuild\\bin\\x64\\Debug\\PayloadDLL.dll";
+	//LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsIATHooking\\IATHookingBuild\\bin\\x64\\Debug\\WindowsIATHooking.dll";
 #else
 	LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\PayloadDLLBuild\\bin\\Win32\\Debug\\PayloadDLL.dll";
+	//LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsIATHooking\\IATHookingBuild\\bin\\Win32\\Debug\\WindowsIATHooking.dll";
 #endif
 // variables for Privilege Escalation
 HANDLE hToken;
@@ -55,18 +57,17 @@ int main() {
 
 	CloseHandle(hSnap);
 
-	printf("Target Program PID: %d\n", PID);
-	Sleep(2000);
-	system("PAUSE");
+	printf("Target Program PID: %d\n\n", PID);
 
 	int InjectionMethod = -1;
 
-	printf("\n");
+	printf("\n\n");
 	printf("   1) CreateRemoteThread\n");
 	printf("   2) NtCreateThread\n");
 	printf("   3) QueueUserAPC\n");
 	printf("   4) SetWindowsHookEx\n");
-	printf("\n");
+	printf("   5) RtlCreateUserThread\n");
+	printf("\n\n\n");
 	printf("Enter the Injection method: ");
 	scanf("%d", &InjectionMethod);
 
@@ -104,6 +105,9 @@ int main() {
 			QueueUserAPC_Type3(DllPath, hProcess, PID);
 		case 4:
 			SetWindowsHookEx_type4(PID, DllPath);
+			break;
+		case 5:
+			RtlCreateUsreThread_type5(hProcess, DllPath);
 			break;
 		default:
 			printf("Choose a valid mathod\n");

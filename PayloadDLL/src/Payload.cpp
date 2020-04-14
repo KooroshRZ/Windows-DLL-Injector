@@ -28,7 +28,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	{
 		case DLL_PROCESS_ATTACH:
 			//MessageBox(0, "Hello I'm DLL injected inside you !!!", "DLL_PROCESS_ATTACH", MB_ICONINFORMATION);
-			//LogMessage("Hello I'm DLL injected inside you in DLL_PROCESS_ATTACH mode!!!");
+			LogMessage("Hello I'm DLL injected inside you in DLL_PROCESS_ATTACH mode!!!");
 			//exit(1);
 			break;
 		case DLL_THREAD_ATTACH:

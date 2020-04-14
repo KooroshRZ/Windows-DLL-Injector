@@ -33,6 +33,9 @@
     <ClCompile Include="src\SetWindowsHookEx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\RtlCreateUserThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Injector.h">

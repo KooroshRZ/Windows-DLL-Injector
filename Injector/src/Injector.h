@@ -26,6 +26,8 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess);
 
 #ifdef DEBUG_NTBUFFER
 
+
+// Unknown buffer structuew definition in NtCreateThread API
 struct NtCreateThreadExBuffer
 {
 	SIZE_T	Size;
@@ -41,7 +43,9 @@ struct NtCreateThreadExBuffer
 
 #endif
 
-typedef NTSTATUS(WINAPI* LPFUN_NtCreateThreadEx)(
+
+// NtCreateThreadEx header definition based on https://undocumented.ntinternals.net/
+typedef NTSTATUS(WINAPI* lpNtCreateThreadEx)(
 
 	OUT		PHANDLE				hThread,
 	IN		ACCESS_MASK			DesiredAccess,
@@ -56,10 +60,33 @@ typedef NTSTATUS(WINAPI* LPFUN_NtCreateThreadEx)(
 	OUT		LPVOID				lpBytesBuffer
 );
 
+
 // tech 3 ---> QueueUserAPC
 bool QueueUserAPC_Type3(LPCSTR DllPath, HANDLE hProcess, DWORD processId);
 
+
 // tech 4 ---> SetWindowsHookEx
 bool SetWindowsHookEx_type4(DWORD processId, LPCSTR dllPath);
+
+
+// tech 5 ---> RtlCreatUserThread
+bool RtlCreateUsreThread_type5(HANDLE hProcess, LPCSTR DllPath);
+
+
+// RtlCreateUserThread header definition based on https://undocumented.ntinternals.net/
+typedef DWORD(WINAPI* pRtlCreatUserThread)(
+
+	IN		HANDLE					ProcessHandle,
+	IN 		PSECURITY_DESCRIPTOR	SecurityDescriptor,
+	IN		BOOLEAN					CreateSuspended,
+	IN		ULONG					StackZeroBits,
+	IN OUT	PULONG					StackReserved,
+	IN OUT	PULONG					StackCommit,
+	IN		PVOID					StartAddress,
+	IN		PVOID					StartParameter,
+	OUT		PHANDLE					ThreadHandle,
+	OUT		PVOID					ClientID
+
+);
 
 #endif

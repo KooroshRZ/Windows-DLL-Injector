@@ -1,9 +1,8 @@
 #include "Injector.h"
 
-bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
+bool RtlCreateUsreThread_type5(HANDLE hProcess, LPCSTR DllPath) {
 
-
-	LPVOID LoadLibraryAddr = (LPVOID)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA");
+	LPVOID LoadLibraryAddr = GetProcAddress(GetModuleHandle("kernel32.dll"), "LoadLibraryA");
 
 	if (!LoadLibraryAddr) {
 		printf("Could note get real address of LoadLibraryA from kernel32.dll!\n");
@@ -14,10 +13,8 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 
 	printf("LoadLibraryA is located at real address: 0X%p\n", (void*)LoadLibraryAddr);
 	Sleep(1000);
-	//system("PAUSE");
-	
 
-	LPVOID pDllPath = VirtualAllocEx(hProcess, 0, strlen(DllPath), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	LPVOID pDllPath = VirtualAllocEx(hProcess, 0, strlen(DllPath), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
 	if (!pDllPath) {
 		printf("Could not allocate Memory in target process\n");
@@ -28,13 +25,10 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 
 	printf("Dll path memory allocated at: 0X%p\n", (void*)pDllPath);
 	Sleep(1000);
-	//system("PAUSE");
-	
 
-	BOOL Written = WriteProcessMemory(hProcess, pDllPath, (LPVOID)DllPath, strlen(DllPath), NULL);
+	BOOL written = WriteProcessMemory(hProcess, pDllPath, (LPVOID)DllPath, strlen(DllPath), NULL);
 
-
-	if (!Written) {
+	if (!written) {
 		printf("Could not write into the allocated memory\n");
 		printf("LastError : 0X%x\n", GetLastError());
 		system("PAUSE");
@@ -43,7 +37,6 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 
 	printf("Dll path memory was written at address : 0x%p\n", (void*)pDllPath);
 	Sleep(1000);
-	//system("PAUSE");
 
 	HMODULE modNtDll = GetModuleHandle("ntdll.dll");
 
@@ -54,55 +47,36 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 		return false;
 	}
 
-	lpNtCreateThreadEx funNtCreateThreadEx = (lpNtCreateThreadEx)GetProcAddress(modNtDll, "NtCreateThreadEx");
+	pRtlCreatUserThread pfunc_RtlCreateUserThread = (pRtlCreatUserThread)GetProcAddress(modNtDll, "RtlCreateUserThread");
 
-	if (!funNtCreateThreadEx) {
-		printf("Failed to get NtCreateThreadEx function address from ntdll.dll\n");
+	if (!pfunc_RtlCreateUserThread) {
+		printf("Failed to get RtlCreateThreadEx function address from ntdll.dll\n");
 		printf("LastError: 0X%x\n", GetLastError());
 		system("PAUSE");
 		return false;
 	}
 
-#ifdef DEBUG_NTBUFFER
+	HANDLE hThread = NULL;
 
-	NtCreateThreadExBuffer ntBuffer;
-
-	memset(&ntBuffer, 0, sizeof(NtCreateThreadExBuffer));
-	ULONG temp0[2];
-	ULONG temp1;
-
-	ntBuffer.Size = sizeof(NtCreateThreadExBuffer);
-	ntBuffer.Unknown1 = 0x10003;
-	ntBuffer.Unknown2 = sizeof(temp0);
-	ntBuffer.Unknown3 = temp0;
-	ntBuffer.Unknown4 = 0;
-	ntBuffer.Unknown5 = 0x10004;
-	ntBuffer.Unknown6 = sizeof(temp1);
-	ntBuffer.Unknown7 = &temp1;
-	ntBuffer.Unknown8 = 0;
-#endif
-
-	HANDLE hThread = nullptr;
-
-	NTSTATUS status = funNtCreateThreadEx(
-		&hThread,
-		THREAD_ALL_ACCESS,
-		nullptr,
+	pfunc_RtlCreateUserThread(
 		hProcess,
-		(LPTHREAD_START_ROUTINE)LoadLibraryAddr,
+		NULL,
+		0,
+		0,
+		0,
+		0,
+		LoadLibraryAddr,
 		pDllPath,
-		NULL, //start instantly
-		0,
-		0,
-		0,
-		nullptr
+		&hThread,
+		NULL
 	);
 
 	if (!hThread) {
-		printf("\nNtCreateThreadEx failed\n");
+
+		printf("\nRtlCreateUserThreadEx failed\n");
 		printf("LastError: 0X%x\n", GetLastError());
+
 		if (VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE)) {
-			//VirtualFreeEx(hProc, reinterpret_cast<int*>(pDllPath) + 0X010000, 0, MEM_RELEASE);
 			printf("Memory was freed in target process\n");
 			Sleep(1000);
 		}
@@ -110,7 +84,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 		return false;
 	}
 
-	printf("Thread started with NtCreateThread\n");
+	printf("Thread started with RtlCreateUserThread\n");
 	Sleep(1000);
 
 	WaitForSingleObject(hThread, INFINITE);
@@ -118,6 +92,7 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 	system("PAUSE");
 
 	if (VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE)) {
+		//VirtualFreeEx(hProc, reinterpret_cast<int*>(pDllPath) + 0X010000, 0, MEM_RELEASE);
 		printf("Memory was freed in target process\n");
 		Sleep(1000);
 	}
@@ -126,5 +101,4 @@ bool NtCreateThreadEx_Type2(LPCSTR DllPath, HANDLE hProcess) {
 
 	CloseHandle(hProcess);
 
-	return true;
 }
