@@ -44,6 +44,7 @@ bool SetWindowsHookEx_type4(DWORD processId, LPCSTR dllPath) {
 		return false;
 	}
 
+	/*
 	HWND hwnd = nullptr;
 	hwnd = FindWindowA(NULL, "C:\\Users\\kourosh\\source\\repos\\WindowsDLLInjector\\TargetProgramBuild\\bin\\x64\\Debug\\TargetProgram.exe");
 	GetWindowThreadProcessId(hwnd, &processId);
@@ -54,7 +55,8 @@ bool SetWindowsHookEx_type4(DWORD processId, LPCSTR dllPath) {
 		system("PAUSE");
 		return false;
 	}
-
+	*/
+	
 	do {
 
 		if (te32.th32OwnerProcessID == processId) {

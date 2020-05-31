@@ -13,6 +13,8 @@
 #define DEBUG_NTBUFFER
 
 bool GetOSInfo();
+
+// Escalate Privilege to SYSTEM level
 bool SetPrivilege(HANDLE hToken, LPCTSTR Privilege, BOOL bEnablePrivilege);
 void DisplayError(LPCSTR szAPI);
 int EscalatePrivilege();

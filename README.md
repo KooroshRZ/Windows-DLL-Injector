@@ -11,16 +11,17 @@ each one has it's pros and cons
 
 Here we have implemented 4/7 techniques
 
-- [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CreatRemoteRhreate (windows Win32 API through windows.h)
-- [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NtCreatThread (wnidows native API through ntdll.dll)
+- [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CreateRemoteThread (windows Win32 API through windows.h)
+- [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NtCreateThread (windows native API through ntdll.dll)
 - [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QueueUserAPC
 - [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SetWindowsHookEx
-- [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RtlCreateUserThread
+- [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RtlCreateUserThread (windows native API through ntdll.dll)
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SetThreadContext
 - [ ] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ReflectiveDllInjection
 
 # CreateRemoteThread
 Maybe it's the first google search result for dll injection\
+This API is mapped to NtCreateThread native API 
 Very well documented and easy to code!
 
 Pros.\
@@ -33,7 +34,7 @@ Cons.\
 
 # NtCreateThread
 Acually not as easy as CreateRemoteThread method\
-it needs some header definitin and exploration through ntdll.dll to find the address of the required function\
+It needs some header definitin and function pointer casting to get the address of NtCreateThread in ntdll.dll\
 A little hard to implement but very effective against windows native system processes
 
 Pros.\
@@ -69,6 +70,18 @@ Pros.\
 
 Cons.\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Too suspicious for antivirus detection because of using hooks
+
+
+# RtlCreatUserThread
+Same as NtCreateThread with some possible wrapping
+
+Pros.\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Can be used for windows native NT processes (like : svchost, smss, ...)\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Harder to be detected
+
+Cons.\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A little hard to implement and debug\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; no official documentation
 
 
 <br><br>

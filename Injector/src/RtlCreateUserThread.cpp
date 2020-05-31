@@ -101,4 +101,5 @@ bool RtlCreateUsreThread_type5(HANDLE hProcess, LPCSTR DllPath) {
 
 	CloseHandle(hProcess);
 
+	return true;
 }
