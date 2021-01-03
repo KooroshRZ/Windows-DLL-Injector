@@ -42,9 +42,9 @@ int dwRetVal = RTN_OK;
 int main() {
 
 #ifdef _WIN64
-	LPCSTR DllPath = "C:\\Users\\saman\\Desktop\\Unreal Pak Hooker\\ImGui-DirectX-11-Kiero-Hook-master\\x64\\Release\\ImGui DirectX 11 Kiero Hook.dll";
+	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\Windows-DLL-Injector\\PayloadDLLBuild\\bin\\Debug\\Win32\\PayloadDLL.dll";
 	#ifdef ProcType_specified
-	const char* szProc = "ManOfMedan-Win64-Shipping.exe";
+	const char* szProc = "some-exe.exe";
 	#else
 	char szProc[80];
 
@@ -54,7 +54,7 @@ int main() {
 #else
 	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\Windows-DLL-Injector\\PayloadDLLBuild\\bin\\Debug\\Win32\\PayloadDLL.dll";
 	#ifdef ProcType_specified
-	const char* szProc = "ManOfMedan-Win64-Shipping.exe";
+	const char* szProc = "some-exe.exe";
 	#else
 	char szProc[80];
 
