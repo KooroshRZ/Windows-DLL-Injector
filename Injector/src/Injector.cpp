@@ -1,12 +1,39 @@
 #include "Injector.h"
 
-#ifdef _WIN64
-	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\Windows-DLL-Injector\\PayloadDLLBuild\\bin\\Debug\\x64\\PayloadDLL.dll";
-	//LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsIATHooking\\IATHookingBuild\\bin\\Debug\\x64\\WindowsIATHooking.dll";
-#else
-	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\Windows-DLL-Injector\\PayloadDLLBuild\\bin\\Debug\\Win32\\PayloadDLL.dll";
-	//LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsIATHooking\\IATHookingBuild\\bin\\Debug\\Win32\\WindowsIATHooking.dll";
-#endif
+#define ProcType_specified
+
+DWORD GetProcId(const char* procName)
+{
+	DWORD procId = 0;
+	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+	if (hSnap != INVALID_HANDLE_VALUE)
+	{
+		PROCESSENTRY32 procEntry;
+		procEntry.dwSize = sizeof(procEntry);
+
+		if (Process32First(hSnap, &procEntry))
+		{
+			do
+			{
+				if (!_stricmp(procEntry.szExeFile, procName))
+				{
+					procId = procEntry.th32ProcessID;
+					break;
+				}
+			} while (Process32Next(hSnap, &procEntry));
+		}
+	}
+	else
+	{
+		printf("CreateToolhelp32Snapshot failed!");
+		printf("LastError : 0x%x\n", GetLastError());
+		system("PAUSE");
+		return 0;
+	}
+	CloseHandle(hSnap);
+	return procId;
+}
 
 // variables for Privilege Escalation
 HANDLE hToken;
@@ -14,62 +41,50 @@ int dwRetVal = RTN_OK;
 
 int main() {
 
-	if (!GetOSInfo()) {
+#ifdef _WIN64
+	LPCSTR DllPath = "C:\\Users\\saman\\Desktop\\Unreal Pak Hooker\\ImGui-DirectX-11-Kiero-Hook-master\\x64\\Release\\ImGui DirectX 11 Kiero Hook.dll";
+	#ifdef ProcType_specified
+	const char* szProc = "ManOfMedan-Win64-Shipping.exe";
+	#else
+	char szProc[80];
+
+	printf("Enter 64bit Target process name : ");
+	scanf_s("%79s", szProc, 79);
+	#endif
+#else
+	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\Windows-DLL-Injector\\PayloadDLLBuild\\bin\\Debug\\Win32\\PayloadDLL.dll";
+	#ifdef ProcType_specified
+	const char* szProc = "ManOfMedan-Win64-Shipping.exe";
+	#else
+	char szProc[80];
+
+	printf("Enter Target process name : ");
+	scanf_s("%79s", szProc, 79);
+	#endif
+#endif
+
+	if (GetOSInfo())
+	{
+		printf("Escalating Privileges...\n");
+		Sleep(2000);
+		int epResult = EscalatePrivilege();
+		printf("Result of Privilege Escalation : %d\n", epResult);
+
+		if (epResult == RTN_OK)
+			printf("Successfully Escalated privileges to SYSTEM level...\n");
+	}
+	else
+	{
 		printf("Failed to get Windows NT version\n");
 		printf("LastError: 0x%x\n", GetLastError());
 	}
-	
-	printf("escalating Privileges...\n");
-	Sleep(2000);
-	int epResult = EscalatePrivilege();
-	printf("Result of Privilege Escalation : %d\n", epResult);
-
-	if (epResult == RTN_OK)
-		printf("Successfully Escalated privileges to SYSTEM level...\n");
-	
-	char szProc[80];
-
-	printf("Target process name : ");
-	scanf_s("%79s", szProc, 79);
-
-	PROCESSENTRY32 PE32{ sizeof(PROCESSENTRY32) };
-	PE32.dwSize = sizeof(PE32);
-
-	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	if (hSnap == INVALID_HANDLE_VALUE) {
-		printf("CreateToolhelp32Snapshot failed!");
-		printf("LastError : 0x%x\n", GetLastError());
-		system("PAUSE");
-		return 0;
-	}
 
 	DWORD PID = 0;
-	BOOL bRet = Process32First(hSnap, &PE32);
-	char yn[3];
-
-	while (bRet) {
-
-		//printf("process: %s\n", PE32.szExeFile);
-		if (!strcmp((LPCSTR)szProc, PE32.szExeFile)) {
-
-			PID = PE32.th32ProcessID;
-			printf("PID found for this process name ---> %d\n", PID);
-			printf("Is this OK ? [Input Y to continue with this PID] : ");
-
-
-			scanf_s("%2s", yn, 2);
-
-			if ( !strcmp((LPCSTR)yn, "y") || !strcmp((LPCSTR)yn, "Y") )
-				break;
-
-			printf("\n\n");
-
-		}
-
-		bRet = Process32Next(hSnap, &PE32);
+	while (!PID)
+	{
+		PID = GetProcId(szProc);
+		Sleep(30);
 	}
-
-	CloseHandle(hSnap);
 
 	printf("Target Program PID: %d\n\n", PID);
 
