@@ -9,7 +9,7 @@ In abuse cases it can be used to hide malicious activity in another process and 
 
 each one has it's pros and cons
 
-Here we have implemented 4/7 techniques
+Here we have implemented 5/7 techniques
 
 - [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CreateRemoteThread (windows Win32 API through windows.h)
 - [x] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NtCreateThread (windows native API through ntdll.dll)
@@ -87,4 +87,5 @@ Cons.\
 <br><br>
 # Credit
 Many thanks for **fdiskyou** and his **InjectAllTheThings** (nice name) repository\
-the website : http://deniable.org/misc/inject-all-the-things
+His Repo : https://github.com/fdiskyou/injectAllTheThings \
+His website : http://deniable.org
