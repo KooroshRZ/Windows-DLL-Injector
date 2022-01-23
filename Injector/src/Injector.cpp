@@ -1,11 +1,9 @@
 #include "Injector.h"
 
 #ifdef _WIN64
-	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\Windows-DLL-Injector\\PayloadDLLBuild\\bin\\Debug\\x64\\PayloadDLL.dll";
-	//LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsIATHooking\\IATHookingBuild\\bin\\Debug\\x64\\WindowsIATHooking.dll";
+	LPCSTR DllPath = "C:\\Users\\PATH\\TO\\DLL_FILE";
 #else
-	LPCSTR DllPath = "C:\\Users\\k.rajabzadeh\\source\\repos\\Windows-DLL-Injector\\PayloadDLLBuild\\bin\\Debug\\Win32\\PayloadDLL.dll";
-	//LPCSTR DllPath = "C:\\Users\\kourosh\\source\\repos\\WindowsIATHooking\\IATHookingBuild\\bin\\Debug\\Win32\\WindowsIATHooking.dll";
+	LPCSTR DllPath = "C:\\Users\\PATH\\TO\\DLL_FILE";
 #endif
 
 // variables for Privilege Escalation
